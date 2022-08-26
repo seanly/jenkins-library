@@ -66,6 +66,11 @@ steps:
       echo "do deploy"
       docker version
 
+after-steps:
+  - name: docker logout
+    use: script
+    run: |
+      docker logout
 ```
 
 ## Inspiration
