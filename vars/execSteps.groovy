@@ -2,10 +2,14 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.Utils
 import com.cloudbees.groovy.cps.NonCPS
 import groovy.transform.Field
 
-@Field String opsboxEnv = ".opsbox/env"
+@Field String opsboxDir = ".opsbox"
+@Field String opsboxEnv = ".${opsboxDir}/env"
 
 def call(def model) {
     def args = " -v /var/run/docker.sock:/var/run/docker.sock "
+
+    env.OPSBOX_ENV = opsboxEnv
+    env.OPSBOX_DIR = opsboxDir
 
     try {
         buildSteps(model, model.steps, args)
@@ -81,11 +85,34 @@ def buildStep(def step, def args) {
 
 def runStep(def step) {
     // build before
-    sh "mkdir -p .opsbox"
+    sh "mkdir -p ${opsboxDir}"
 
     // build
     if (step.use == "script") {
         sh step.run
+    } else if(step.use == "groovy") {
+
+        /**
+         * config format:
+         * steps:
+         * - name: build
+         *   use: groovy
+         *   id: test-xxx
+         *   run: |
+         *     def test() {
+         *         echo "test"
+         *     }
+         *     test()
+         *
+         * do actions:
+         * 1. write groovy
+         * 2. load groovy
+         * 3. run groovy func(run)
+         */
+        def scriptFile = step.name.replaceAll(" ", "-")
+        def groovyPath = "${opsboxDir}/${scriptFile}.groovy"
+        writeFile(file: groovyPath, text: step.run)
+        load(groovyPath)
     } else if(step.use =~ "oes/*") {
         def oesStepId = step.use.substring(4)
 
