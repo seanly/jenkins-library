@@ -30,9 +30,9 @@ steps:
   - name: build
     image: rockylinux:8
     use: script
-    actions:
-      - echo "building step 1"
-      - echo "--//INFO: ${DOCKER_AUTH_USR}:${DOCKER_AUTH_PSW}"
+    run: |
+      echo "building step 1"
+      echo "--//INFO: ${DOCKER_AUTH_USR}:${DOCKER_AUTH_PSW}"
 
   - name: test
     parallel:
@@ -49,8 +49,8 @@ steps:
         only: 
           BRANCH_NAME: [develop, release/*]
         use: script
-        actions:
-          - apk add docker
+        run: |
+          apk add docker
 
   - name: test oesStep
     use: oes/sample
@@ -66,6 +66,11 @@ steps:
       echo "do deploy"
       docker version
 
+after-steps:
+  - name: docker logout
+    use: script
+    run: |
+      docker logout
 ```
 
 ## Inspiration
