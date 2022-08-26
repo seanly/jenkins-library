@@ -5,6 +5,7 @@ class PipelineModel {
     // the container image the used to run the build
     def image
     def steps = []
+    def afterSteps = []
     // variables set as env vars
     def variables = []
     // secrets set as env vars
@@ -21,24 +22,29 @@ class PipelineModel {
 
     def loadSteps(def yaml) {
         yaml.steps.each { YamlStep ->
+            this.steps.add(loadStep(YamlStep))
+        }
+        yaml."after-steps"?.each { YamlStep ->
+            this.afterSteps.add(loadStep(YamlStep))
+        }
+    }
 
-            if (YamlStep.parallel != null) {
+    static def loadStep(def yaml) {
 
-                def parallelSteps = []
-                YamlStep.parallel.each { yamlParallelStep ->
-                    parallelSteps.add(new StepModel().load(yamlParallelStep))
-                }
-
-                this.steps.add(new StepModel(
-                        name: YamlStep.name,
-                        image: YamlStep.image,
-                        parallel: parallelSteps
-                ))
-
-            } else {
-                def step = new StepModel().load(YamlStep)
-                this.steps.add(step)
+        if (yaml.parallel != null) {
+            def parallelSteps = []
+            yaml.parallel.each { yamlParallelStep ->
+                parallelSteps.add(new StepModel().load(yamlParallelStep))
             }
+
+            return new StepModel(
+                    name: yaml.name,
+                    image: yaml.image,
+                    parallel: parallelSteps
+            )
+
+        } else {
+            return new StepModel().load(yaml)
         }
     }
 

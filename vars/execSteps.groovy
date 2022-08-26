@@ -7,7 +7,17 @@ import groovy.transform.Field
 def call(def model) {
     def args = " -v /var/run/docker.sock:/var/run/docker.sock "
 
-    model.steps.each { step ->
+    try {
+        buildSteps(model, model.steps, args)
+    } catch (err) {
+        throw err
+    } finally {
+        buildSteps(model, model.afterSteps, args)
+    }
+}
+
+def buildSteps(def model, def steps, def args) {
+    steps.each { step ->
         if (step.image == null) {
             step.image = model.image
         }
@@ -20,19 +30,19 @@ def call(def model) {
                             if (pStep.image == null) {
                                 pStep.image = step.image
                             }
-                            buildStep(model, pStep, args)
+                            buildStep(pStep, args)
                         }
                     }
                 }
                 parallel(stages)
             } else {
-                buildStep(model, step, args)
+                buildStep(step, args)
             }
         }
     }
 }
 
-def buildStep(def model, def step, def args) {
+def buildStep(def step, def args) {
     if (step.except.size() > 0 && globContains(step.except)) {
         Utils.markStageSkippedForConditional(env.STAGE_NAME)
         return
