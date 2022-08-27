@@ -20,57 +20,65 @@ node {
 image: rockylinux:8
 
 variables:
-  TEST_URL: http://example.com
+  DOCKER_REGISTRY: harbor.opsbox.dev
   
 secrets:
   DOCKER_AUTH: usernamePassword/acr-docker-auth
 
-steps:
-
+stages:
   - name: build
-    image: rockylinux:8
-    use: script
-    run: |
-      echo "building step 1"
-      echo "--//INFO: ${DOCKER_AUTH_USR}:${DOCKER_AUTH_PSW}"
+    steps:
+      - use: script
+        code: |
+          echo -n "${DOCKER_AUTH_PSW}" | docker login -u ${DOCKER_AUTH_USR} --password-stdin ${DOCKER_REGISTRY}
+      - image: rockylinux:8
+        use: script
+        code: |
+          echo "building step 1"
+          echo "--//INFO: ${DOCKER_AUTH_USR}:${DOCKER_AUTH_PSW}"
 
+    after-steps:
+      - use: script
+        code: |
+          docker logout ${DOCKER_REGISTRY}
+          
   - name: test
-    parallel:
-      - name: unit test
-        except:
-          BRANCH_NAME:
-            - master
-        use: script
-        run: |
-          echo "unit testing"
-
-      - name: integration test
-        image: alpine
-        only: 
-          BRANCH_NAME: [develop, release/*]
-        use: script
-        run: |
-          apk add docker
+    steps:
+      - parallel:
+          - name: test1
+            except:
+              BRANCH_NAME:
+                - master
+            steps:
+              - use: script
+                code: |
+                  echo "unit testing"
+    
+          - name: test2
+            only: 
+              BRANCH_NAME: [develop, release/*]
+            steps:
+              - image: alpine
+                use: script
+                code: |
+                  apk add docker
 
   - name: test oesStep
-    use: oes/sample
-    run: 
-      arg1: hi, opsbox!
+    steps:
+      - use: oes/sample
+        with: 
+          arg1: hi, opsbox!
 
   - name: deploy
     trigger: manual
     only:
       - release/*
-    use: script
-    run: |
-      echo "do deploy"
-      docker version
-
-after-steps:
-  - name: docker logout
-    use: script
-    run: |
-      docker logout
+    steps:
+      - use: script
+        code: |
+          echo "do deploy"
+          docker version
+    
 ```
 
 ## Inspiration

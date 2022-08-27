@@ -1,10 +1,43 @@
-import dev.opsbox.jenkins.PipelineModel
+import dev.opsbox.jenkins.Pipeline
+
+import com.cloudbees.groovy.cps.NonCPS
+import groovy.transform.Field
+
+@Field String opsboxDir = ".opsbox"
+@Field String opsboxEnv = ".${opsboxDir}/env"
 
 def call(String yamlName) {
+    script = this
+    def args = " -v /var/run/docker.sock:/var/run/docker.sock "
 
-    def yaml = readYaml file: yamlName
-    def model = new PipelineModel().load(yaml)
+    env.OPSBOX_ENV = opsboxEnv
+    env.OPSBOX_DIR = opsboxDir
 
+    try {
+        def yaml = readYaml file: yamlName
+        def model = new Pipeline(script: script).load(yaml)
+
+        timeout(time: 10, unit: 'MINUTES') {
+            withEnv(model.variables) {
+                withCredentials(getSecrets(model)) {
+                    runStages(model, args)
+                }
+            }
+        }
+    } catch (err) {
+        throw err
+    }
+}
+
+def runStages(def model, def args) {
+    model.stages.each { it ->
+        stage(it.name) {
+            it.run(args)
+        }
+    }
+}
+
+def getSecrets(def model) {
     def secrets = []
     if (model.secrets instanceof Map) {
         model.secrets?.each {
@@ -36,12 +69,5 @@ def call(String yamlName) {
             }
         }
     }
-
-    timeout(time: 10, unit: 'MINUTES') {
-        withEnv(model.variables) {
-            withCredentials(secrets) {
-                execSteps(model)
-            }
-        }
-    }
+    return secrets
 }
