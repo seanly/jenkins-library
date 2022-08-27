@@ -72,6 +72,7 @@ stages:
   - name: deploy
     trigger: manual
     only:
+      BRANCH_NAME:
       - release/*
     steps:
       - use: script
