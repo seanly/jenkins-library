@@ -21,8 +21,8 @@ class ParallelStep extends Step{
     def run(def args) {
         def stages = [:]
         parallel.each { pStage ->
-            stages[pStage["name"]] = {
-                script.stage(pStage["name"]) {
+            stages[pStage.name] = {
+                script.stage(pStage.name) {
                     pStage.run(args)
                 }
             }
