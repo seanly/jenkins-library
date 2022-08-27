@@ -9,7 +9,7 @@ library identifier: 'objl@master', retriever: modernSCM(
 
 node {
   checkout scm
-  execPipeline('.opsbox/pipeline.yml')
+  pipelineExecute('.opsbox/pipeline.yml')
 }
 
 ```
