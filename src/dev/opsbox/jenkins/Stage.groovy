@@ -157,7 +157,7 @@ class Stage {
         // k = env[k]
         // v = match list, ex: master release/**
         when.each { k, v ->
-            ret = v.find { env."${k}" =~ it }
+            ret = v.find { script.env."${k}" =~ it }
             if (ret != true) {
                 return false
             }
