@@ -38,4 +38,20 @@ class Pipeline {
             this.secrets[k] = v
         }
     }
+
+    def run(def args) {
+        script.timeout(time: 10, unit: 'MINUTES') {
+            script.withEnv(variables) {
+                script.withCredentials(Util.getSecrets(script, secrets)) {
+                    runStages(args)
+                }
+            }
+        }
+    }
+
+    def runStages(def args) {
+        this.stages.each { it ->
+            it.run(args)
+        }
+    }
 }

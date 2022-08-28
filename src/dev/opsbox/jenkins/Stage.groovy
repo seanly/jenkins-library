@@ -1,4 +1,6 @@
 package dev.opsbox.jenkins
+
+import com.cloudbees.groovy.cps.NonCPS
 import org.jenkinsci.plugins.pipeline.modeldefinition.Utils
 import dev.opsbox.jenkins.steps.GroovyStep
 import dev.opsbox.jenkins.steps.OesStep
@@ -16,6 +18,11 @@ class Stage {
 
     // trigger: manual|automatic, default=automatic
     def trigger = "automatic"
+
+    // variables set as env vars
+    def variables = []
+    // secrets set as env vars
+    def secrets = [:]
 
     def steps = []
     def afterSteps = []
@@ -35,8 +42,22 @@ class Stage {
         this.name = yaml.name
         this.trigger = yaml.trigger
 
+        this.loadVariables(yaml.variables)
+        this.loadSecrets(yaml.secrets)
         this.loadSteps(yaml)
         return this
+    }
+
+    def loadVariables(def yaml) {
+        yaml.each { k, v ->
+            this.variables.add("$k=$v")
+        }
+    }
+
+    def loadSecrets(def yaml) {
+        yaml.each { k, v ->
+            this.secrets[k] = v
+        }
     }
 
     def loadSteps(def yaml) {
@@ -69,6 +90,16 @@ class Stage {
     }
 
     def run(def args) {
+        script.stage(name) {
+            script.withEnv(variables) {
+                script.withCredentials(Util.getSecrets(script, secrets)) {
+                    runStage(args)
+                }
+            }
+        }
+    }
+
+    def runStage(def args) {
 
         if (except.size() > 0 && globContains(except)) {
             Utils.markStageSkippedForConditional(script.env.STAGE_NAME)
@@ -116,13 +147,10 @@ class Stage {
     }
 
     def runStep(def step, def args) {
-        // build before
-        script.sh "mkdir -p ${script.env.OPSBOX_DIR}"
-
         // build
         step.run(args)
-        // build after
 
+        // build after
         /**
          * 注入环境变量
          * 分析 .opsbox/env 文件
@@ -137,6 +165,7 @@ class Stage {
         }
     }
 
+    @NonCPS
     static def extractLines(def content) {
         List myKeys = []
         content.eachLine { line ->
