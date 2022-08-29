@@ -76,7 +76,7 @@ stages:
       BRANCH_NAME:
       - release/*
     steps:
-      - use: sh
+      - use: script
         code: |
           echo "do deploy"
           docker version
