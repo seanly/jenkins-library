@@ -3,24 +3,28 @@ package dev.opsbox.jenkins.steps
 import dev.opsbox.jenkins.Step
 
 class OesStep extends Step {
-    def _with = [:]
+    def _props = [:]
+    def _id
 
     def load(def yaml) {
         super.load(yaml)
-        this._with = yaml['with']
+        this._id = yaml['id']
+        this._props = yaml['props']
 
         return this
     }
 
     def run(def args) {
         /**
-         * use: oes/xxx
+         * use: oesStep
+         * id: sample
+         * props:
+         *  arg1: xxx
          */
-        def oesStepId = this.use.substring(4)
         def stepArgs = []
-        this._with.each {k, v ->
+        this._props.each {k, v ->
             stepArgs.add(this.script.stepProp(key: k, value: v))
         }
-        script.oesStep stepId: oesStepId, stepProps: stepArgs
+        script.oesStep stepId: _id, stepProps: stepArgs
     }
 }

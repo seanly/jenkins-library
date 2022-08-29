@@ -65,8 +65,9 @@ stages:
 
   - name: test oesStep
     steps:
-      - use: oes/sample
-        with: 
+      - use: oesStep
+        id: sample
+        props: 
           arg1: hi, opsbox!
 
   - name: deploy
