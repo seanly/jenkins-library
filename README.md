@@ -65,8 +65,9 @@ stages:
 
   - name: test oesStep
     steps:
-      - use: oes/sample
-        with: 
+      - use: oesStep
+        id: sample
+        props: 
           arg1: hi, opsbox!
 
   - name: deploy
@@ -75,7 +76,7 @@ stages:
       BRANCH_NAME:
       - release/*
     steps:
-      - use: script
+      - use: sh
         code: |
           echo "do deploy"
           docker version
