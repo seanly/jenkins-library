@@ -1,0 +1,42 @@
+
+variables:
+  DOCKER_BUILDKIT: 1
+  APP_VERSION: 0.1.0-SNAPSHOT
+
+stages:
+  - name: prepare env
+    steps:
+      - use: script
+        code: |
+          echo -n "${DOCKER_AUTH_PSW}" | docker login -u ${DOCKER_AUTH_USR} --password-stdin ${DOCKER_REGISTRY}
+
+          echo "--//INFO: Create app version..."
+          _app_version=$(echo "${APP_VERSION}" | sed 's/-SNAPSHOT//g')-$(date '+%Y%m%d%H%M%S').`git rev-parse --short HEAD`
+          _app_name=$(echo "$JOB_NAME" | sed 's/%2F/-/g' | awk -F/ '{print $(NF-1)}')
+          
+          echo "IMAGE_VERSION=${_app_name}-v${_app_version}" >> ${OPSBOX_ENV}
+          
+          if [[ "${BRANCH_NAME}" == "master" ]]; then
+            echo "PROFILE=release" >> ${OPSBOX_ENV}
+          else
+            echo "PROFILE=incrementals" >> ${OPSBOX_ENV}
+          fi
+          GIT_COMMIT_LOG=$(git show --pretty=%s%b -s)
+          echo "GIT_COMMIT_LOG=${GIT_COMMIT_LOG}" >> ${OPSBOX_ENV}
+
+  - name: build image
+    steps:
+      - use: script
+        code: |
+          docker build \
+            --secret id=settings,src=${MAVEN_SETTINGS} \
+            -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${IMAGE_VERSION} \
+            . -f .opsbox/package/Dockerfile \
+            --build-arg PROFILE=${PROFILE}
+
+          docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${IMAGE_VERSION}
+
+    after-steps:
+      - use: script
+        code: |
+          docker logout ${DOCKER_REGISTRY}

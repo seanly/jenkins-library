@@ -9,7 +9,7 @@ library identifier: 'objl@master', retriever: modernSCM(
 
 node {
   checkout scm
-  pipelineExecute('.opsbox/pipeline.yml')
+  pipelineFile('.opsbox/pipeline.yml')
 }
 
 ```
@@ -82,6 +82,34 @@ stages:
           docker version
     
 ```
+
+## Template Usage
+
+```groovy
+
+library identifier: 'objl@master', retriever: modernSCM(
+  [$class: 'GitSCMSource',
+   remote: 'https://github.com/opsbox-dev/oes-jenkins-library.git'])
+
+node {
+  checkout scm
+  pipelineTemplate([
+          templateName: "maven",
+          variables: [
+                  DOCKER_REGISTRY: "registry.cn-chengdu.aliyuncs.com",
+                  DOCKER_IMAGE: "k8ops/sample",
+          ],
+          secrets: [
+                  DOCKER_AUTH: 'usernamePassword/k8ops-acr-auth',
+                  MAVEN_SETTINGS: 'file/k8ops-maven-settings',
+                  KUBECONFIG: 'file/kubeconfig-cd-test-k8s'
+          ]
+  ])
+}
+
+```
+
+
 
 ## Inspiration
 This project is inspired by [wolox-ci](https://github.com/Wolox/wolox-ci)
