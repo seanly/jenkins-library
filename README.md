@@ -1,6 +1,27 @@
 # oes-jenkins-library
 
-## Jenkinsfile
+## File Usage
+```groovy
+
+library identifier: 'objl@master', retriever: modernSCM(
+  [$class: 'GitSCMSource',
+   remote: 'https://github.com/opsbox-dev/oes-jenkins-library.git'])
+
+properties([
+        disableConcurrentBuilds(abortPrevious: true),
+        buildDiscarder(logRotator(numToKeepStr: '5')),
+])
+
+node {
+    checkout scm
+    pipelineFile('.opsbox/pipeline.yml')
+}
+
+```
+
+
+## Template Usage
+
 ```groovy
 
 library identifier: 'objl@master', retriever: modernSCM(
@@ -8,13 +29,26 @@ library identifier: 'objl@master', retriever: modernSCM(
    remote: 'https://github.com/opsbox-dev/oes-jenkins-library.git'])
 
 node {
-  checkout scm
-  pipelineFile('.opsbox/pipeline.yml')
+    checkout scm
+    pipelineTemplate(
+            "maven", 
+            [
+                    DOCKER_REGISTRY: "registry.cn-chengdu.aliyuncs.com", 
+                    DOCKER_IMAGE: "k8ops/sample",
+                    HELM_CHARTS_URL: "https://nexus3.opsbox.dev/repository/helm-charts"
+                    APP_NAME: "sample"
+            ], 
+            [
+                    DOCKER_AUTH: 'usernamePassword/k8ops-acr-auth', 
+                    MAVEN_SETTINGS: 'file/k8ops-maven-settings', 
+                    KUBECONFIG: 'file/kubeconfig-cd-test-k8s'
+            ]
+    )
 }
 
 ```
 
-## `.opsbox/pipeline.yml`:
+## Pipeline Syntax
 
 ```yaml
 image: rockylinux:8
@@ -83,34 +117,7 @@ stages:
     
 ```
 
-## Template Usage
-
-```groovy
-
-library identifier: 'objl@master', retriever: modernSCM(
-  [$class: 'GitSCMSource',
-   remote: 'https://github.com/opsbox-dev/oes-jenkins-library.git'])
-
-node {
-  checkout scm
-  pipelineTemplate([
-          templateName: "maven",
-          variables: [
-                  DOCKER_REGISTRY: "registry.cn-chengdu.aliyuncs.com",
-                  DOCKER_IMAGE: "k8ops/sample",
-          ],
-          secrets: [
-                  DOCKER_AUTH: 'usernamePassword/k8ops-acr-auth',
-                  MAVEN_SETTINGS: 'file/k8ops-maven-settings',
-                  KUBECONFIG: 'file/kubeconfig-cd-test-k8s'
-          ]
-  ])
-}
-
-```
-
-
-
 ## Inspiration
+
 This project is inspired by [wolox-ci](https://github.com/Wolox/wolox-ci)
 

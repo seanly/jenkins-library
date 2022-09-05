@@ -25,6 +25,9 @@ stages:
           echo "GIT_COMMIT_LOG=${GIT_COMMIT_LOG}" >> ${OPSBOX_ENV}
 
   - name: build image
+    except:
+      GIT_COMMIT_LOG:
+        - \[ci skip\].*
     steps:
       - use: script
         code: |
