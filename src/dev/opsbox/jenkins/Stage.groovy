@@ -160,6 +160,9 @@ class Stage {
         if (script.fileExists(script.env.OPSBOX_ENV)) {
             def envstrs = extractLines(script.readFile(file: script.env.OPSBOX_ENV))
             envstrs.each { line ->
+                if (line =~ /^#.*/) {
+                    return
+                }
                 def envstr = line.split("=")
                 script.env."${envstr[0]}" = envstr[1]
             }

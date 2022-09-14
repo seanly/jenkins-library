@@ -13,7 +13,8 @@ def call(String yamlText, Map variables = [:], Map secrets = [:]) {
     env.OPSBOX_ENV = opsboxEnv
     env.OPSBOX_DIR = opsboxDir
 
-    sh "mkdir -p ${env.OPSBOX_DIR}"
+    // create .opsbox directory
+    writeFile file: "${opsboxDir}/.keep", text: ''
 
     try {
         def yaml = readYaml text: yamlText
