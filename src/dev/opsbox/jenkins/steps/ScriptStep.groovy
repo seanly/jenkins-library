@@ -20,10 +20,6 @@ class ScriptStep extends Step {
     }
 
     def run(def args) {
-        if (this._type == "sh") {
-            runShScript(args)
-        }
-
         switch (this._type) {
             case "bat":
                 script.bat "${this._code}"
