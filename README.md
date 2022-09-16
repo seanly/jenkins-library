@@ -19,35 +19,6 @@ node {
 
 ```
 
-
-## Template Usage
-
-```groovy
-
-library identifier: 'objl@master', retriever: modernSCM(
-  [$class: 'GitSCMSource',
-   remote: 'https://github.com/opsbox-dev/oes-jenkins-library.git'])
-
-node {
-    checkout scm
-    pipelineTemplate(
-            "maven", 
-            [
-                    DOCKER_REGISTRY: "registry.cn-chengdu.aliyuncs.com", 
-                    DOCKER_IMAGE: "k8ops/sample",
-                    HELM_CHARTS_URL: "https://nexus3.opsbox.dev/repository/helm-charts"
-                    APP_NAME: "sample"
-            ], 
-            [
-                    DOCKER_AUTH: 'usernamePassword/k8ops-acr-auth', 
-                    MAVEN_SETTINGS: 'file/k8ops-maven-settings', 
-                    KUBECONFIG: 'file/kubeconfig-cd-test-k8s'
-            ]
-    )
-}
-
-```
-
 ## Pipeline Syntax
 
 ```yaml
