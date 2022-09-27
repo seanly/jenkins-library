@@ -6,7 +6,7 @@ import groovy.transform.Field
 @Field String opsboxDir = ".opsbox"
 @Field String opsboxEnv = "${opsboxDir}/env"
 
-def call(String yamlText, Map variables = [:], Map secrets = [:]) {
+def call(String yamlText, Map variables = [:], Map secrets = [:], List filter = []) {
     script = this
     def args = " -v /var/run/docker.sock:/var/run/docker.sock "
 
@@ -28,7 +28,7 @@ def call(String yamlText, Map variables = [:], Map secrets = [:]) {
             model.secrets[k] = v
         }
 
-        model.run(args)
+        model.run(args, filter)
     } catch (err) {
         throw err
     }

@@ -39,19 +39,25 @@ class Pipeline {
         }
     }
 
-    def run(def args) {
+    def run(def args, def filter=[]) {
         script.timeout(time: 10, unit: 'MINUTES') {
             script.withEnv(variables) {
                 script.withCredentials(Util.getSecrets(script, secrets)) {
-                    runStages(args)
+                    runStages(args, filter)
                 }
             }
         }
     }
 
-    def runStages(def args) {
+    def runStages(def args, def filter=[]) {
         this.stages.each { it ->
-            it.run(args)
+            if (filter.size() == 0) {
+                it.run(args)
+            } else {
+                if (filter.contains(it.name)) {
+                    it.run(args)
+                }
+            }
         }
     }
 }
