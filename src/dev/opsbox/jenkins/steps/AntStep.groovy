@@ -3,6 +3,7 @@ package dev.opsbox.jenkins.steps
 import dev.opsbox.jenkins.Step
 
 class AntStep extends Step {
+    def _tools = [:]
     def _props = [:]
     def _id
 
