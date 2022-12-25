@@ -26,7 +26,7 @@ class AntStep extends Step {
          * props:
          *  arg1: xxx
          */
-        def _stepProps = "basedir=${env.WORKSPACE}\n"
+        def _stepProps = "basedir=${script.env.WORKSPACE}\n"
         this._props.each {k, v ->
             _stepProps += "${k}=${v}\n"
         }
@@ -34,10 +34,10 @@ class AntStep extends Step {
         def _run_properties = ".oes/run/${_id}.properties"
         def _run_step = _id
 
-        writeFile encoding: 'UTF-8', file: _run_properties, text: _stepProps
+        script.writeFile encoding: 'UTF-8', file: _run_properties, text: _stepProps
 
-        antHome = tool this._tools['antHome']
-        aslHome = tool this._tools['aslHome']
+        def antHome = script.tool this._tools['antHome']
+        def aslHome = script.tool this._tools['aslHome']
 
         script.withEnv(["ANT_HOME=$antHome", 
                         "STEPS_ROOT=$aslHome", 
