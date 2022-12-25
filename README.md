@@ -68,9 +68,12 @@ stages:
                 code: |
                   apk add docker
 
-  - name: test oesStep
+  - name: test antStep
     steps:
-      - use: oesStep
+      - use: antStep
+        tools:
+          antHome: apache ant
+          aslHome: ant steps library
         id: sample
         props: 
           arg1: hi, opsbox!
