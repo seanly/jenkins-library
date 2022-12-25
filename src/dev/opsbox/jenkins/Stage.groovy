@@ -4,7 +4,7 @@ import com.cloudbees.groovy.cps.NonCPS
 import dev.opsbox.jenkins.steps.ArchiveArtifactsStep
 import org.jenkinsci.plugins.pipeline.modeldefinition.Utils
 import dev.opsbox.jenkins.steps.GroovyStep
-import dev.opsbox.jenkins.steps.OesStep
+import dev.opsbox.jenkins.steps.AntStep
 import dev.opsbox.jenkins.steps.ParallelStep
 import dev.opsbox.jenkins.steps.ScriptStep
 
@@ -83,8 +83,8 @@ class Stage {
                 return new GroovyStep(script: script, image: image).load(yaml)
             case "archiveArtifacts":
                 return new ArchiveArtifactsStep(script: script).load(yaml)
-            case "oesStep":
-                return new OesStep(script: script).load(yaml)
+            case "antStep":
+                return new AntStep(script: script).load(yaml)
         }
 
         throw new Exception("yaml.use(${yaml.use}) is not support")
