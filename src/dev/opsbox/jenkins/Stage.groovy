@@ -148,8 +148,15 @@ class Stage {
     }
 
     def runStep(def step, def args) {
-        // build
-        step.run(args)
+
+        if (step.lock == null) {
+            // build
+            step.run(args)
+        } else {
+            script.lock(script.env.NODE_NAME) {
+                step.run(args)
+            }
+        }
 
         // build after
         /**
