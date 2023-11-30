@@ -6,6 +6,7 @@ abstract class Step {
 
     def script
     def image
+    def lock
 
     // parallel steps
     def parallel = []
@@ -26,6 +27,9 @@ abstract class Step {
     protected def load(def yaml) {
         if (yaml.image != null) {
             this.image = yaml.image
+        }
+        if (yaml.lock != null) {
+            this.lock = yaml.lock
         }
         this.use = yaml.use
 
