@@ -44,7 +44,7 @@ stages:
 
     after-steps:
       - use: script
-        lock: ${env.NODE_NAME}
+        lock: node
         code: |
           docker logout ${DOCKER_REGISTRY}
           
