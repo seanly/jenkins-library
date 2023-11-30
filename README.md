@@ -1,11 +1,12 @@
-# oes-jenkins-library
+# jenkins-library
 
 ## File Usage
+
 ```groovy
 
-library identifier: 'objl@master', retriever: modernSCM(
+library identifier: 'jenkins-library@master', retriever: modernSCM(
   [$class: 'GitSCMSource',
-   remote: 'https://github.com/opsbox-dev/oes-jenkins-library.git'])
+   remote: 'https://jihulab.com/seanly/jenkins-library.git'])
 
 properties([
         disableConcurrentBuilds(abortPrevious: true),
@@ -69,13 +70,14 @@ stages:
                 code: |
                   apk add docker
 
-  - name: test antStep
+  - name: test ant step
     steps:
-      - use: antStep
+      - use: ant
         tools:
-          antHome: apache ant
-          aslHome: ant steps library
-        id: sample
+          ant: ant-v1.10.14
+          steps: steps-v1.0.0
+        id: test
+        name: sample
         props: 
           arg1: hi, opsbox!
 

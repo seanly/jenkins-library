@@ -83,7 +83,7 @@ class Stage {
                 return new GroovyStep(script: script, image: image).load(yaml)
             case "archiveArtifacts":
                 return new ArchiveArtifactsStep(script: script).load(yaml)
-            case "antStep":
+            case "ant":
                 return new AntStep(script: script).load(yaml)
         }
 
