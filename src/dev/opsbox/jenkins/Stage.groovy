@@ -1,7 +1,6 @@
 package dev.opsbox.jenkins
 
 import com.cloudbees.groovy.cps.NonCPS
-import dev.opsbox.jenkins.steps.ArchiveArtifactsStep
 import org.jenkinsci.plugins.pipeline.modeldefinition.Utils
 import dev.opsbox.jenkins.steps.GroovyStep
 import dev.opsbox.jenkins.steps.AntStep
