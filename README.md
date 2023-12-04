@@ -6,7 +6,7 @@
 
 library identifier: 'jenkins-library@master', retriever: modernSCM(
   [$class: 'GitSCMSource',
-   remote: 'https://jihulab.com/seanly/jenkins-library.git'])
+   remote: 'https://gitee.com/seanly/jenkins-library.git'])
 
 properties([
         disableConcurrentBuilds(abortPrevious: true),
