@@ -4,7 +4,7 @@
 
 ```groovy
 
-library identifier: 'jenkins-library@master', retriever: modernSCM(
+library identifier: 'jenkins-library@main', retriever: modernSCM(
   [$class: 'GitSCMSource',
    remote: 'https://gitee.com/seanly/jenkins-library.git'])
 
@@ -15,7 +15,7 @@ properties([
 
 node {
     checkout scm
-    pipelineFile('.opsbox/pipeline.yml')
+    pipelineFile('.opsbox/pipeline.yaml')
 }
 
 ```
