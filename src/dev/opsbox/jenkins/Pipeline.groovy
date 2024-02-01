@@ -2,6 +2,8 @@ package dev.opsbox.jenkins
 
 class Pipeline {
 
+    def timeout = 10
+
     // the container image the used to run the build
     def image
     // variables set as env vars
@@ -13,6 +15,9 @@ class Pipeline {
     def script
 
     def load(def yaml) {
+        if (yaml.timeout != null) {
+            this.timeout = yaml.timeout
+        }
         this.image = yaml.image
         this.loadVariables(yaml.variables)
         this.loadSecrets(yaml.secrets)
@@ -40,7 +45,7 @@ class Pipeline {
     }
 
     def run(def args, def filter=[]) {
-        script.timeout(time: 10, unit: 'MINUTES') {
+        script.timeout(time: this.timeout, unit: 'MINUTES') {
             script.withEnv(variables) {
                 script.withCredentials(Util.getSecrets(script, secrets)) {
                     runStages(args, filter)
