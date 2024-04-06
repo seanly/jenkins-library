@@ -1,0 +1,8 @@
+stages:
+
+- name: build
+  image: seanly/toolset:openjdk-8u372-b07-1
+  steps:
+  - use: script
+    code: |
+      ./mvnw -B -e -U clean package

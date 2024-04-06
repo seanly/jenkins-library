@@ -43,6 +43,10 @@ class Stage {
         this.name = yaml.name
         this.trigger = yaml.trigger
 
+        if (yaml.image != null) {
+            this.image = yaml.image
+        }
+
         this.loadVariables(yaml.variables)
         this.loadSecrets(yaml.secrets)
         this.loadSteps(yaml)
