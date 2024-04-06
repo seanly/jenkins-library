@@ -21,7 +21,7 @@ class GroovyStep extends Step {
          * steps:
          * - use: groovy
          *   id: test-xxx
-         *   run: |
+         *   code: |
          *     def test() {
          *         echo "test"
          *     }

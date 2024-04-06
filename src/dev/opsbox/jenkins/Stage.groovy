@@ -9,6 +9,7 @@ import dev.opsbox.jenkins.steps.ScriptStep
 
 class Stage {
     def script
+    
     def name
     def image
     // env what only to run the step in

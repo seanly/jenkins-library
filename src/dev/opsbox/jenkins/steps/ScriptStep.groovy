@@ -2,6 +2,15 @@ package dev.opsbox.jenkins.steps
 
 import dev.opsbox.jenkins.Step
 
+/*
+
+- use: script
+  image: seanly/toolset:brew
+  code: |
+    echo "hi, world"
+    brew install vim
+
+*/
 class ScriptStep extends Step {
 
     def _code = ""

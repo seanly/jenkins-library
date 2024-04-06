@@ -33,7 +33,7 @@ class AntStep extends Step {
             _stepProps += "${k}=${v}\n"
         }
 
-        def _run_properties = ".oes/run/${_name}-${_id}.properties"
+        def _run_properties = "${this.script.env.OPSBOX_DIR}/antrun/${_name}-${_id}.properties"
         def _run_step = _name
 
         script.writeFile encoding: 'UTF-8', file: _run_properties, text: _stepProps

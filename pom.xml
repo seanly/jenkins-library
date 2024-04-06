@@ -8,7 +8,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>dev.opsbox.jenkins</groupId>
-    <artifactId>oes-jenkins-library</artifactId>
+    <artifactId>jenkins-library</artifactId>
     <version>0.1.0</version>
 
     <name>Opsbox Jenkins Library</name>
@@ -18,7 +18,7 @@
     <licenses>
       <license>
         <name>Apache License 2.0</name>
-        <comments>https://github.com/opsbox-dev/oes-pipeline-library/blob/master/LICENSE</comments>
+        <comments>https://github.com/seanly/jenkins-library/blob/master/LICENSE</comments>
       </license>
     </licenses>
 

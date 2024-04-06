@@ -3,6 +3,26 @@ package dev.opsbox.jenkins.steps
 import dev.opsbox.jenkins.Stage
 import dev.opsbox.jenkins.Step
 
+/*
+- parallel:
+  - name: stage1
+    except:
+        BRANCH_NAME:
+        - master
+    steps:
+        - use: script
+        code: |
+            echo "unit testing"
+  - name: stage2
+    only: 
+        BRANCH_NAME: [develop, release/*]
+    steps:
+        - image: alpine
+        use: script
+        code: |
+            apk add docker
+*/
+
 class ParallelStep extends Step{
 
     def load(def yaml) {

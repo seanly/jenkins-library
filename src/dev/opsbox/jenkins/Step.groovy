@@ -17,10 +17,7 @@ abstract class Step {
 
     /**
      * step identify
-     * type: script, jenkins, oes
-     *   script: execute script
-     *   groovy: execute groovy script
-     *   oes/xxx: oes-steps-plugin steps
+     * type: script, groovy, ant
      */
     def use
 
