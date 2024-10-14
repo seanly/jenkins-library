@@ -150,7 +150,7 @@ class Stage {
     }
 
     def runStep(def step, def args) {
-
+        
         if (step.lock == null) {
             // build
             step.run(args)
@@ -159,7 +159,12 @@ class Stage {
                 step.run(args)
             }
         }
+        
+        injectEnv()
+    }
 
+    def injectEnv() {
+        
         // build after
         /**
          * 注入环境变量
