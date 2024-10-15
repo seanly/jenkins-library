@@ -144,7 +144,10 @@ class Stage {
             if (step.isParallelStep()) {
                 step.run(args)
             } else {
-                runStep(step, args)
+                def envvars = injectEnv()
+                script.withEnv(envvars) {
+                    runStep(step, args)
+                }
             }
         }
     }
@@ -159,11 +162,11 @@ class Stage {
                 step.run(args)
             }
         }
-        
-        injectEnv()
     }
 
     def injectEnv() {
+        
+        def envvars = []
         
         // build after
         /**
@@ -178,9 +181,11 @@ class Stage {
                     return
                 }
                 def envstr = line.split("=")
-                script.env."${envstr[0]}" = envstr[1]
+                envvars.add("${envstr[0]}=${envstr[1]}")
             }
         }
+        
+        return envvars
     }
 
     @NonCPS
