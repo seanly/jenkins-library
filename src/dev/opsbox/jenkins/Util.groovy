@@ -29,6 +29,12 @@ class Util {
                             credentialsId: credId,
                             variable: "${secretKey}"
                     ]
+                } else if (type == "string") {
+                    ret << [
+                            $class: 'StringBinding',
+                            credentialsId: credId,
+                            variable: "${secretKey}"
+                    ]
                 } else {
                     script.error "${type} not supported"
                 }
