@@ -3,7 +3,7 @@ package dev.opsbox.jenkins
 import com.cloudbees.groovy.cps.NonCPS
 import org.jenkinsci.plugins.pipeline.modeldefinition.Utils
 import dev.opsbox.jenkins.steps.GroovyStep
-import dev.opsbox.jenkins.steps.AntStep
+import dev.opsbox.jenkins.steps.ToolStep
 import dev.opsbox.jenkins.steps.ParallelStep
 import dev.opsbox.jenkins.steps.ScriptStep
 
@@ -85,8 +85,8 @@ class Stage {
                 return new ScriptStep(script: script, image: image).load(yaml)
             case "groovy":
                 return new GroovyStep(script: script, image: image).load(yaml)
-            case "ant":
-                return new AntStep(script: script).load(yaml)
+            case "tool":
+                return new ToolStep(script: script).load(yaml)
         }
 
         throw new Exception("yaml.use(${yaml.use}) is not support")

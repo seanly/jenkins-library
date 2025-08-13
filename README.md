@@ -17,7 +17,6 @@ node {
             disableConcurrentBuilds(abortPrevious: true)
     ])
 
-
     checkout scm
 
     pipelineFile('.opsbox/ci.yaml')
@@ -49,7 +48,7 @@ secrets:
 stages:
   - name: build # 阶段显示名字
     steps: # step 任务
-      - use: script # 任务类型，目前支持 script/groovy/ant/parallel, 其中 parallel 是内部的语法是stages的语法，用于并行执行多个stages。
+      - use: script # 任务类型，目前支持 script/groovy/tool/parallel, 其中 parallel 是内部的语法是stages的语法，用于并行执行多个stages。
         code: |
           echo -n "${DOCKER_AUTH_PSW}" | docker login -u ${DOCKER_AUTH_USR} --password-stdin ${DOCKER_REGISTRY}
       - image: rockylinux:8
